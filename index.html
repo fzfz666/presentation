@@ -3,650 +3,556 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>方智 - AI应用开发工程师 风采展示</title>
-    <!-- FontAwesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Google Fonts (Consider Lato or Open Sans for clean readability) -->
+    <title>方智 - AI应用开发实习生自我展示</title>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        :root {
-            /* Sunny & Professional Theme */
-            --bg-light: #F8F9FA; /* Very light grey background */
-            --bg-slide: #FFFFFF; /* White slide background */
-            --primary-color: #0077CC; /* Professional Blue */
-            --secondary-color: #00AEEF; /* Bright Cyan/Sky Blue */
-            --accent-color: #FFA500; /* Warm Orange accent */
-            --text-dark: #343A40; /* Dark Grey for text */
-            --text-medium: #6C757D; /* Medium Grey for subtitles/secondary text */
-            --border-color: #DEE2E6; /* Light border color */
-            --shadow-color: rgba(0, 0, 0, 0.1);
-
-            --title-font: 'Lato', 'Noto Sans SC', sans-serif; /* Prioritize Lato, fallback to Noto Sans SC */
-            --body-font: 'Lato', 'Noto Sans SC', sans-serif;
-        }
-
+        /* Reset and Base Styles */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
         html, body {
             height: 100%;
-            overflow: hidden; /* Prevent scrollbars on body */
-            font-family: var(--body-font);
-            background-color: var(--bg-light);
+            overflow: hidden;
+            font-family: 'Lato', sans-serif; /* Body font */
+            background-color: #f9fafb; /* Slightly off-white base */
+            color: #374151; /* Dark Gray */
         }
 
-        .presentation-container {
-            width: 100%;
+        /* Presentation Container */
+        .presentation {
             height: 100%;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Slide Styling */
+        .slide {
+            height: 100vh;
+            width: 100vw;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            perspective: 1200px;
-        }
-
-        .slide {
+            padding: 5vh 7vw; /* Slightly adjusted padding */
             position: absolute;
-            width: 90%;
-            height: 90%;
-            max-width: 1200px; /* Consistent max width */
-            max-height: 720px; /* Consistent max height */
-            background-color: var(--bg-slide);
-            box-shadow: 0 15px 35px var(--shadow-color);
-            border-radius: 16px; /* Softer corners */
-            display: flex;
-            flex-direction: column; /* Default layout */
-            color: var(--text-dark);
+            top: 0;
+            left: 0;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out, visibility 0.6s;
-            transform: translateZ(-100px) rotateY(30deg) scale(0.8); /* Start off-screen effect */
-            overflow: hidden; /* Prevent content overflow */
-            padding: 5vh 6vw; /* Responsive padding */
+            transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother bezier curve */
+            background-color: #ffffff; /* Default white */
+            transform: scale(0.95); /* Start slightly scaled down */
+        }
+        /* Subtle background variations */
+        .slide.bg-alt {
+             /* Very light gradient or pattern */
+             background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%);
         }
 
         .slide.active {
             opacity: 1;
             visibility: visible;
-            transform: translateZ(0) rotateY(0deg) scale(1);
+            transform: scale(1); /* Scale to full size */
             z-index: 1;
         }
-
-        .slide.previous {
-            transform: translateZ(-100px) rotateY(-30deg) scale(0.8); /* Move previous slide effect */
+        .slide.exiting {
             opacity: 0;
-            visibility: hidden;
+            transform: scale(1.05); /* Scale up slightly on exit */
             z-index: 0;
         }
 
-        /* --- Slide Content Structure & Typography --- */
 
-        .slide-header {
-            margin-bottom: 3vh; /* Space below header */
-            padding-bottom: 2vh;
-            border-bottom: 1px solid var(--border-color);
-            text-align: center; /* Center header elements */
+        /* Content Container within Slide */
+        .slide-content {
+            max-width: 1100px; /* Slightly wider max */
             width: 100%;
+            text-align: left;
+            opacity: 0; /* Start hidden for animation */
+            animation: fadeInContent 0.6s ease-out 0.4s forwards; /* Content fade-in */
+        }
+        .slide.active .slide-content { /* Ensure animation runs when slide is active */
+            opacity: 0; /* Reset for animation */
+            animation: fadeInContent 0.6s ease-out 0.4s forwards;
         }
 
-        .slide-title {
-            font-family: var(--title-font);
-            font-size: clamp(1.8em, 3.5vw, 2.6em); /* Responsive font size */
+        @keyframes fadeInContent {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Headings */
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif; /* Heading font */
+            color: #1e3a8a; /* Darker Indigo/Blue */
+            margin-bottom: 0.8em;
+            font-weight: 600;
+        }
+        h1 {
+            font-size: calc(2.6rem + 1.1vw);
+            color: #111827; /* Very Dark Gray */
+            text-align: center;
+            margin-bottom: 0.4em;
             font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 0.5vh;
-            line-height: 1.3;
-            display: flex; /* Align icon and text */
-            align-items: center;
-            justify-content: center; /* Center title elements */
-            gap: 15px; /* Space between icon and text */
         }
-         .slide-title .icon { /* Specific styling for title icon */
-            font-size: 0.9em; /* Slightly smaller than text */
-            color: var(--primary-color);
-         }
-
-
-        .slide-subtitle {
-            font-size: clamp(1em, 1.8vw, 1.2em);
-            font-weight: 400;
-            color: var(--text-medium);
-            max-width: 800px; /* Limit width for readability */
-            margin: 0 auto; /* Center subtitle */
-            line-height: 1.6;
-        }
-
-        .slide-body {
-            flex-grow: 1; /* Take remaining vertical space */
-            width: 100%;
+        h2 {
+            font-size: calc(1.9rem + 0.9vw);
+            color: #1d4ed8; /* Brighter Blue */
+            border-bottom: 3px solid #93c5fd; /* Lighter Blue accent border */
+            padding-bottom: 0.4em;
+            margin-bottom: 1.2em;
             display: flex;
-            flex-direction: column;
-            justify-content: center; /* Vertically center content in body */
-            align-items: center; /* Horizontally center content blocks */
-            overflow-y: auto; /* Allow scrolling if content overflows */
-            padding: 2vh 0;
+            align-items: center;
         }
-
-        .content-block { /* Container for main text/elements */
-            max-width: 950px; /* Max width for content */
-            width: 100%;
-            text-align: left; /* Default text alignment */
-            margin-bottom: 2.5vh;
+        h2 .icon {
+            margin-right: 0.7em;
+            font-size: 0.85em;
+            color: #2563eb; /* Medium Blue */
         }
-
-        .content-block p, .content-block ul {
-            font-size: clamp(1em, 1.5vw, 1.1em);
-            line-height: 1.8;
-            color: var(--text-dark);
-            margin-bottom: 2vh;
+        h3 {
+            font-size: calc(1.4rem + 0.6vw);
+            color: #059669; /* Emerald Green/Teal */
+            margin-top: 1.8em;
+            font-weight: 600;
         }
+         h4 {
+             font-size: calc(1.2rem + 0.4vw);
+             color: #1e40af; /* Indigo */
+             margin-bottom: 0.7em;
+             display: flex;
+             align-items: center;
+         }
+         h4 i { margin-right: 0.6em; color: #3b82f6; /* Brighter Blue Icon */}
 
-        .content-block ul {
+        /* Text and Lists */
+        p {
+            font-size: calc(1rem + 0.25vw); /* Slightly larger base */
+            line-height: 1.8; /* More line spacing */
+            color: #4b5563; /* Medium Gray */
+            margin-bottom: 1.2em;
+        }
+        ul {
             list-style: none;
             padding-left: 0;
+            margin-bottom: 1em;
+        }
+        li {
+            font-size: calc(1rem + 0.25vw);
+            margin-bottom: 1em; /* More spacing between items */
+            padding-left: 2.2em;
+            position: relative;
+            color: #374151;
+            opacity: 0; /* For stagger animation */
+            transform: translateX(-15px); /* Start slightly left for animation */
+        }
+        /* Staggered List Item Animation */
+        .slide.active li {
+             animation: slideInFade 0.5s ease-out forwards;
+        }
+        /* Apply delays using nth-child */
+        .slide.active li:nth-child(1) { animation-delay: 0.5s; }
+        .slide.active li:nth-child(2) { animation-delay: 0.6s; }
+        .slide.active li:nth-child(3) { animation-delay: 0.7s; }
+        .slide.active li:nth-child(4) { animation-delay: 0.8s; }
+        /* Add more if needed */
+
+        @keyframes slideInFade {
+            to { opacity: 1; transform: translateX(0); }
         }
 
-        .content-block li {
-            margin-bottom: 1.8vh;
-            display: flex;
-            align-items: flex-start; /* Align icon top */
-        }
-
-        .content-block li .icon {
-            font-size: 1.1em; /* Icon size relative to text */
-            color: var(--secondary-color); /* Brighter icon color */
-            margin-right: 12px;
-            width: 22px; /* Fixed width for alignment */
+        li i.fa-li {
+            position: absolute;
+            left: 0;
+            top: 0.15em; /* Fine-tune alignment */
+            width: 1.8em;
             text-align: center;
-            padding-top: 0.2em; /* Fine-tune vertical alignment */
-            flex-shrink: 0; /* Prevent icon from shrinking */
+            color: #f59e0b; /* Amber/Orange */
+            font-size: 1.2em;
         }
 
-        .highlight {
-            color: var(--accent-color); /* Orange highlight */
+        /* Highlighting and Emphasis */
+        strong, .highlight {
+            color: #d97706; /* Darker Amber */
             font-weight: 700;
+            background-color: #fef3c7; /* Light yellow highlight background */
+            padding: 0.1em 0.3em;
+            border-radius: 3px;
         }
 
-        .highlight-blue { /* Alternative blue highlight */
-            color: var(--primary-color);
+        /* Highlight Box - More Refined */
+        .highlight-box {
+            background-color: #eff6ff; /* Very Light Blue */
+            border: 1px solid #dbeafe; /* Lighter Blue Border */
+            border-left: 6px solid #3b82f6; /* Accent Blue */
+            padding: 1.8em 2.2em; /* More padding */
+            margin: 1.8em 0;
+            border-radius: 10px; /* Smoother radius */
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.1); /* Softer Shadow */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+         .highlight-box:hover {
+             transform: translateY(-3px);
+             box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+         }
+        .highlight-box strong {
+             color: #1e3a8a; /* Dark Indigo/Blue */
+             background-color: transparent; /* Remove inner highlight bg */
+             padding: 0;
+        }
+         .highlight-box i {
+             color: #3b82f6;
+             margin-right: 0.7em;
+             font-size: 1.3em; /* Larger icon */
+         }
+
+        /* Project Card - Enhanced */
+        .project-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb; /* Light Gray Border */
+            padding: 1.8em;
+            margin-top: 1.8em;
+            border-radius: 12px; /* More rounded */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); /* Subtle shadow */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+         .project-card:hover {
+             transform: translateY(-4px);
+             box-shadow: 0 7px 20px rgba(0, 0, 0, 0.08);
+         }
+         .project-card ul li { font-size: calc(0.98rem + 0.18vw); }
+
+        /* Summary Points (Pills) - Gradient */
+        .summary-points {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2em; /* More gap */
+            margin-top: 2em;
+            justify-content: center;
+        }
+        .summary-point {
+            background: linear-gradient(135deg, #2563eb, #3b82f6); /* Blue Gradient */
+            color: #ffffff;
+            padding: 0.8em 1.8em; /* Adjust padding */
+            border-radius: 50px;
+            font-size: calc(0.95rem + 0.2vw);
+            font-weight: 600; /* Bold text */
+            display: flex;
+            align-items: center;
+            box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            border: none; /* Remove border */
+        }
+        .summary-point:hover {
+            transform: translateY(-4px) scale(1.03); /* Lift and slightly enlarge */
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.4);
+        }
+        .summary-point i {
+            margin-right: 0.7em;
+            font-size: 1.15em;
+        }
+
+        /* Profile Section - Enhanced */
+        .profile-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: left;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .profile-pic {
+            width: 160px; /* Slightly larger */
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 6px solid #ffffff; /* White border */
+            margin-right: 2.5em;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* More prominent shadow */
+        }
+        .profile-info h1 { margin-bottom: 0.1em; font-weight: 700;}
+        .profile-info h2 { font-size: calc(1.6rem + 0.7vw); border-bottom: none; margin-bottom: 0.2em; color: #059669;} /* Use Green/Teal */
+        .profile-info p { font-size: calc(1.05rem + 0.2vw); color: #6b7280; margin-bottom: 0; } /* Darker Gray */
+        .profile-info p i { margin-right: 0.5em; color: #6b7280;}
+
+        /* Footer / Progress Indicator */
+        .slide-indicator {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.85em;
+            color: #9ca3af; /* Lighter Gray */
+            background-color: rgba(243, 244, 246, 0.8); /* Light gray semi-transparent */
+            padding: 6px 18px;
+            border-radius: 15px;
+            z-index: 10;
             font-weight: 600;
         }
 
-        /* --- Layout Structures --- */
-        .layout-columns {
-            display: flex;
-            justify-content: space-between;
-            gap: 4vw; /* Gap between columns */
-            width: 100%;
-        }
-
-        .layout-column {
-            flex: 1;
-            min-width: 0; /* Prevent flex overflow */
-        }
-
-        .card { /* Visual block element */
-            background-color: #FDFDFD; /* Slightly off-white card */
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 3vh 3vw;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            height: 100%; /* Make cards in columns same height */
-        }
-
-        .card h3 {
-            color: var(--primary-color);
-            font-size: clamp(1.1em, 1.7vw, 1.3em);
-            margin-bottom: 1.5vh;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-         .card h3 .icon {
-             font-size: 1em;
-             color: var(--primary-color);
-         }
-         .card ul { margin-bottom: 0; } /* Remove bottom margin for lists in cards */
-
-         .centered-content {
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              text-align: center;
-         }
-
-
-        /* --- Specific Slide Styles --- */
-
-        /* Slide 1: Title */
-        #slide-1 {
-            background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%); /* Light Cyan Gradient */
-            color: var(--text-dark);
-            justify-content: center; /* Center everything */
-            text-align: center;
-        }
-        #slide-1 .slide-header { border-bottom: none; margin-bottom: 1vh;}
-        #slide-1 .profile-pic {
-            width: clamp(100px, 15vw, 150px);
-            height: clamp(100px, 15vw, 150px);
-            border-radius: 50%;
-            object-fit: cover;
-            border: 5px solid var(--bg-slide);
-            box-shadow: 0 6px 20px var(--shadow-color);
-            margin-bottom: 2vh;
-        }
-        #slide-1 .profile-name {
-            font-size: clamp(2.5em, 5vw, 3.5em);
-            color: var(--primary-color);
-            font-weight: 700;
-            margin-bottom: 0;
-        }
-        #slide-1 .profile-role {
-            font-size: clamp(1.3em, 2.5vw, 1.8em);
-            color: var(--secondary-color);
-            font-weight: 400;
-            margin-bottom: 2vh;
-        }
-        #slide-1 .competition-info {
-            font-size: clamp(0.9em, 1.5vw, 1.1em);
-            color: var(--text-medium);
-        }
-
-        /* Slide 5: Key Results - Visual Emphasis */
-        #slide-5 .results-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 3vw;
-            padding: 3vh 0;
-        }
-        #slide-5 .result-item {
-            text-align: center;
-        }
-         #slide-5 .result-item i {
-             font-size: clamp(2.5em, 5vw, 3.5em);
-             color: var(--primary-color);
-             margin-bottom: 1vh;
-         }
-         #slide-5 .result-item p {
-             font-size: clamp(1em, 1.5vw, 1.1em);
-             font-weight: 600;
-             color: var(--text-dark);
-             line-height: 1.5;
-         }
-         #slide-5 .result-item .highlight {
-             display: block; /* Make highlight stand on its own line */
-             font-size: 1.2em; /* Emphasize the number/keyword */
-         }
-
-        /* Slide 8: Validation - Highlight Interview */
-         #slide-8 .interview-highlight {
-              background-color: #FFF9E6; /* Light yellow background */
-              border: 1px solid var(--accent-color);
-              padding: 2vh 2.5vw;
-              border-radius: 8px;
-              margin-top: 2vh;
-         }
-          #slide-8 .interview-highlight p {
-             color: var(--text-dark);
-             margin-bottom: 0;
-             display: flex;
-             align-items: center;
-             gap: 10px;
-          }
-           #slide-8 .interview-highlight .icon {
-             color: var(--accent-color);
-             font-size: 1.5em;
-           }
-
-
-        /* Slide 9: Thank You */
-        #slide-9 {
-            justify-content: center;
-            text-align: center;
-             background: linear-gradient(135deg, #CFD8DC 0%, #ECEFF1 100%); /* Subtle Grey Gradient */
-        }
-         #slide-9 .slide-header { border-bottom: none; margin-bottom: 3vh;}
-        #slide-9 .thank-you-icon {
-             font-size: clamp(3em, 6vw, 4.5em);
-             color: var(--primary-color);
-             margin-bottom: 2vh;
-        }
-        #slide-9 .final-message {
-             font-size: clamp(1.3em, 2vw, 1.6em);
-             color: var(--primary-color);
-             font-weight: 600;
-             margin-bottom: 3vh;
-        }
-         #slide-9 .contact-prompt {
-             font-size: clamp(1em, 1.5vw, 1.1em);
-             color: var(--text-medium);
-         }
-          #slide-9 .contact-icons a {
-               font-size: 1.8em;
-               color: var(--secondary-color);
-               margin: 0 15px;
-               transition: color 0.3s ease, transform 0.3s ease;
-               display: inline-block; /* Allows transform */
-          }
-           #slide-9 .contact-icons a:hover {
-                color: var(--primary-color);
-                transform: scale(1.1);
-           }
-
-        /* --- Utilities --- */
-        .text-center { text-align: center; }
-        .margin-top-s { margin-top: 1vh; }
-        .margin-top-m { margin-top: 2vh; }
-        .margin-top-l { margin-top: 4vh; }
-
-        /* --- Slide Indicator --- */
-        .slide-indicator {
+         /* Click hint */
+         .click-hint {
             position: absolute;
-            bottom: 20px;
-            right: 30px;
-            font-size: 0.85em;
-            color: var(--text-medium);
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 3px 8px;
-            border-radius: 4px;
-            z-index: 2; /* Above content */
-        }
-
-        /* --- Click Instruction --- */
-        .click-instruction {
-             position: absolute;
-             bottom: 20px;
-             left: 30px;
-             font-size: 0.8em;
-             color: #B0BEC5; /* Lighter grey */
-             z-index: 2;
-             animation: pulse 2.5s infinite ease-in-out;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-
-        /* Responsive adjustments */
-         @media (max-width: 768px) {
-            .slide { padding: 4vh 5vw; }
-            .layout-columns { flex-direction: column; gap: 2.5vh;}
-            .card { padding: 2.5vh 4vw; }
-            #slide-5 .results-container { flex-direction: column; gap: 2vh;}
+            bottom: 65px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75em;
+            color: #adb5bd; /* Light Gray */
+            animation: blinkHint 1.8s infinite ease-in-out;
+            z-index: 10;
          }
+         @keyframes blinkHint {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+         }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .slide { padding: 5vh 4vw; }
+            .profile-container { flex-direction: column; text-align: center; }
+            .profile-pic { margin: 0 0 1.5em 0; width: 130px; height: 130px;}
+            .profile-info { text-align: center; }
+            .profile-info h2, .profile-info p { text-align: center; }
+            h1 { font-size: calc(2.1rem + 1vw); }
+            h2 { font-size: calc(1.6rem + 0.8vw); }
+            li, p { font-size: calc(0.95rem + 0.2vw); }
+            .summary-points { gap: 0.8em;}
+            .summary-point { padding: 0.6em 1.2em; }
+        }
 
     </style>
 </head>
 <body>
-    <div class="presentation-container" id="presentationContainer">
 
-        <!-- Slide 1: Title -->
-        <div class="slide active" id="slide-1">
-             <!-- Add your photo here -->
-             <img src="fangzhi.png" alt="方智头像" class="profile-pic">
-             <h1 class="profile-name">方 智</h1>
-             <h2 class="profile-role">AI 应用开发工程师</h2>
-             <div class="competition-info">
-                 <p>第九届简历面试大赛 · 信息学部初赛</p>
-                 <p>个人风采展示</p>
-             </div>
-            <div class="slide-indicator">1 / 9</div>
-            <div class="click-instruction"><i class="fas fa-hand-point-up"></i> 点击翻页</div>
-        </div>
+<div class="presentation">
 
-        <!-- Slide 2: Opening -->
-        <div class="slide" id="slide-2">
-            <div class="slide-header">
-                <h2 class="slide-title"><i class="fas fa-lightbulb icon"></i>源于热爱，志在应用</h2>
-                <p class="slide-subtitle">对技术的热爱，源于童年对QQ机器人的好奇；如今，这份热爱已化为清晰的目标。</p>
-            </div>
-            <div class="slide-body">
-                <div class="content-block centered-content">
-                     <p style="font-size: 1.2em; margin-bottom: 1.5em;"><i class="fas fa-bullseye icon" style="color: var(--accent-color);"></i>我的目标：成为一名优秀的 <span class="highlight">AI 应用开发工程师</span>。</p>
-                     <p style="font-size: 1.2em;"><i class="fas fa-cogs icon" style="color: var(--accent-color);"></i>我的渴望：将先进的AI技术，转化为能真正<span class="highlight">解决问题、提升效率</span>的实用工具。</p>
-                </div>
-            </div>
-            <div class="slide-indicator">2 / 9</div>
-            <div class="click-instruction"><i class="fas fa-hand-point-up"></i> 点击翻页</div>
-        </div>
-
-        <!-- Slide 3: Foundation -->
-        <div class="slide" id="slide-3">
-             <div class="slide-header">
-                <h2 class="slide-title"><i class="fas fa-building icon"></i>扎根工程，拥抱智能</h2>
-                <p class="slide-subtitle">坚实的软件工程基础是实现这一切的根基。</p>
-            </div>
-             <div class="slide-body">
-                <div class="content-block">
-                    <div class="card">
-                        <h3><i class="fas fa-briefcase icon"></i>后端开发实习 (青岛海研电子)</h3>
-                        <ul>
-                            <li><i class="fab fa-java icon"></i>锻炼了扎实的 <span class="highlight-blue">Java 编程</span> 和 <span class="highlight-blue">系统设计</span> 能力。</li>
-                            <li><i class="fas fa-server icon"></i>深入理解了<span class="highlight-blue">稳定可靠系统</span>对AI应用的重要性。</li>
-                            <li><i class="fas fa-bolt icon"></i>实践证明，善用AI工具能让学习与开发<span class="highlight-blue">事半功倍</span>。</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="slide-indicator">3 / 9</div>
-            <div class="click-instruction"><i class="fas fa-hand-point-up"></i> 点击翻页</div>
-        </div>
-
-        <!-- Slide 4: Core AI Project - Intro -->
-        <div class="slide" id="slide-4">
-            <div class="slide-header">
-                <h2 class="slide-title"><i class="fas fa-robot icon"></i>核心项目：AI 学长智能体</h2>
-                <p class="slide-subtitle">不仅是技术的落地，更是童年梦想的实践。</p>
-            </div>
-            <div class="slide-body">
-                <div class="content-block">
-                    <div class="layout-columns">
-                        <div class="layout-column card">
-                             <h3><i class="fas fa-chalkboard-teacher icon"></i>项目背景与动机</h3>
-                             <ul>
-                                 <li><i class="fas fa-search icon"></i>针对校园信息获取<span class="highlight">痛点</span>。</li>
-                                 <li><i class="fas fa-lightbulb icon"></i>主动探索AI应用开发。</li>
-                                 <li><i class="fas fa-book icon"></i><span class="highlight">自学并实践 Langchain</span> 等框架。</li>
-                                  <li><i class="fas fa-child icon"></i>将<span class="highlight">童年梦想</span>照进现实。</li>
-                             </ul>
-                        </div>
-                        <div class="layout-column card">
-                             <h3><i class="fas fa-cogs icon"></i>技术应用与实现</h3>
-                             <ul>
-                                 <li><i class="fas fa-link icon"></i>运用 <span class="highlight-blue">Langchain</span> (智能'编排师')。</li>
-                                 <li><i class="fas fa-book-open icon"></i>引入 <span class="highlight-blue">RAG</span> 技术 (专属'知识库')。</li>
-                                 <li><i class="fas fa-paint-brush icon"></i>结合<span class="highlight-blue">精巧提示词</span>与交互优化。</li>
-                                 <li><i class="fas fa-code icon"></i>独立完成开发与迭代。</li>
-                             </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="slide-indicator">4 / 9</div>
-            <div class="click-instruction"><i class="fas fa-hand-point-up"></i> 点击翻页</div>
-        </div>
-
-        <!-- Slide 5: Core AI Project - Results -->
-        <div class="slide" id="slide-5">
-             <div class="slide-header">
-                 <h2 class="slide-title"><i class="fas fa-chart-bar icon"></i>AI 学长：成果与价值</h2>
-                 <p class="slide-subtitle">用技术创造切实可见的价值。</p>
-            </div>
-             <div class="slide-body">
-                <div class="content-block centered-content">
-                     <div class="results-container">
-                         <div class="result-item">
-                            <i class="fas fa-tachometer-alt"></i>
-                            <p><span class="highlight">资源节省率 50%</span>(关键任务优化)</p>
-                         </div>
-                         <div class="result-item">
-                            <i class="fas fa-user-shield"></i>
-                            <p><span class="highlight">注重用户隐私保护</span>(内置安全机制)</p>
-                         </div>
-                         <div class="result-item">
-                            <i class="fas fa-hands-helping"></i>
-                            <p><span class="highlight">切实帮助同学</span>(解决实际问题)</p>
-                         </div>
-                    </div>
-                     <p class="margin-top-l" style="font-style: italic; color: var(--text-medium);">"当看到自己的作品能切实帮助到同学，那种成就感是难以言表的。"</p>
-                </div>
-            </div>
-             <div class="slide-indicator">5 / 9</div>
-             <div class="click-instruction"><i class="fas fa-hand-point-up"></i> 点击翻页</div>
-        </div>
-
-        <!-- Slide 6: Other Projects -->
-        <div class="slide" id="slide-6">
-            <div class="slide-header">
-                <h2 class="slide-title"><i class="fas fa-flask icon"></i>更多实践探索</h2>
-                <p class="slide-subtitle">在不同场景下锻炼应用AI解决问题的能力。</p>
-            </div>
-            <div class="slide-body">
-                <div class="content-block">
-                    <div class="layout-columns">
-                        <div class="layout-column card">
-                             <h3><i class="fas fa-shield-alt icon"></i>智盾 AI 安全助手</h3>
-                             <ul>
-                                 <li><i class="fas fa-rocket icon"></i><span class="highlight">一周内</span>快速将想法开发成可用原型。</li>
-                                 <li><i class="fas fa-stopwatch icon"></i>展现<span class="highlight">高效迭代</span>与<span class="highlight">落地能力</span>。</li>
-                             </ul>
-                        </div>
-                        <div class="layout-column card">
-                             <h3><i class="fab fa-ethereum icon"></i>区块链智能合约检测</h3>
-                             <ul>
-                                  <li><i class="fas fa-microscope icon"></i>深入理解AI技术与<span class="highlight-blue">特定垂直领域</span>的结合。</li>
-                                  <li><i class="fas fa-search-plus icon"></i>探索AI在<span class="highlight-blue">代码审计</span>等场景的应用。</li>
-                             </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="slide-indicator">6 / 9</div>
-            <div class="click-instruction"><i class="fas fa-hand-point-up"></i> 点击翻页</div>
-        </div>
-
-        <!-- Slide 7: Soft Skills -->
-        <div class="slide" id="slide-7">
-            <div class="slide-header">
-                <h2 class="slide-title"><i class="fas fa-users-cog icon"></i>全面发展：锤炼软功</h2>
-                <p class="slide-subtitle">技术能力之外，综合素质同样重要。</p>
-            </div>
-            <div class="slide-body">
-                <div class="content-block">
-                    <div class="layout-columns">
-                        <div class="layout-column card">
-                             <h3><i class="fas fa-sitemap icon"></i>组织协调与责任担当</h3>
-                             <ul>
-                                 <li><i class="fas fa-user-tie icon"></i>担任“<span class="highlight">卓越人才班</span>”班长。</li>
-                                 <li><i class="fas fa-tasks icon"></i>提升<span class="highlight">组织协调</span>与<span class="highlight">项目推进</span>能力。</li>
-                                 <li><i class="fas fa-flag icon"></i>培养<span class="highlight">责任感</span>与<span class="highlight">担当精神</span>。</li>
-                             </ul>
-                        </div>
-                        <div class="layout-column card">
-                             <h3><i class="fas fa-comments icon"></i>沟通表达与知识传递</h3>
-                             <ul>
-                                  <li><i class="fas fa-chalkboard-teacher icon"></i>负责“<span class="highlight-blue">云支教</span>”AI课堂。</li>
-                                  <li><i class="fas fa-microphone-alt icon"></i>锻炼将复杂技术<span class="highlight-blue">清晰表达</span>的沟通力。</li>
-                                  <li><i class="fas fa-bridge icon"></i>理解<span class="highlight-blue">连接技术与需求</span>的重要性。</li>
-                             </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="slide-indicator">7 / 9</div>
-            <div class="click-instruction"><i class="fas fa-hand-point-up"></i> 点击翻页</div>
-        </div>
-
-        <!-- Slide 8: Learning & Validation -->
-        <div class="slide" id="slide-8">
-             <div class="slide-header">
-                 <h2 class="slide-title"><i class="fas fa-seedling icon"></i>持续求知与外界认可</h2>
-                 <p class="slide-subtitle">保持开放心态，不断学习进步，并获得积极反馈。</p>
-            </div>
-             <div class="slide-body">
-                <div class="content-block">
-                    <div class="card">
-                         <h3><i class="fas fa-sync-alt icon"></i>学习与交流</h3>
-                         <ul>
-                             <li><i class="fas fa-rss icon"></i>始终保持对 <span class="highlight-blue">AI 领域发展</span> 的高度关注。</li>
-                             <li><i class="fab fa-github icon"></i>常在 <span class="highlight-blue">技术社区</span> 学习交流（如 GitHub）。</li>
-                             <li><i class="fas fa-user-friends icon"></i>积极向 <span class="highlight-blue">行业前辈</span> 请教学习。</li>
-                         </ul>
-                         <div class="interview-highlight">
-                            <p><i class="fas fa-check-circle icon"></i>近期在 <span class="highlight">中信科技 (北京)</span> 的面试中获得了<span class="highlight">非常积极的反馈</span>，是对个人积累的有力印证。</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-             <div class="slide-indicator">8 / 9</div>
-             <div class="click-instruction"><i class="fas fa-hand-point-up"></i> 点击翻页</div>
-        </div>
-
-        <!-- Slide 9: Thank You -->
-        <div class="slide" id="slide-9">
-             <div class="slide-header">
-                <h2 class="slide-title"><i class="fas fa-hands-clapping icon"></i>感谢聆听 · 期待交流</h2>
-             </div>
-            <div class="slide-body centered-content">
-                 <i class="fas fa-rocket thank-you-icon"></i>
-                 <p class="final-message">已准备好迎接挑战、贡献价值！</p>
-                 <p class="contact-prompt margin-top-m">期待各位评委老师的指导！</p>
-                 <div class="contact-icons margin-top-l">
-                     <!-- Add actual links here -->
-                     <!-- <a href="mailto:fangzhi@stu.ouc.edu.cn" title="邮箱"><i class="fas fa-envelope"></i></a> -->
-                     <!-- <a href="tel:15126666674" title="电话"><i class="fas fa-phone"></i></a> -->
-                     <!-- <a href="#" target="_blank" title="GitHub"><i class="fab fa-github"></i></a> -->
+    <!-- Slide 1: Title & Profile -->
+    <div class="slide active" id="slide-1">
+        <div class="slide-content">
+             <div class="profile-container">
+                 <!-- Replace 'your-photo.jpg' with your actual photo path/URL -->
+                 <img src="fangzhi.png" alt="方智" class="profile-pic" onerror="this.style.display='none'; this.onerror=null;">
+                 <div class="profile-info">
+                     <h1>方智</h1>
+                     <h2><i class="fas fa-briefcase icon" style="color:#059669;"></i>AI应用开发实习生</h2>
+                     <p><i class="fas fa-university"></i>中国海洋大学 | 软件工程专业</p>
                  </div>
-            </div>
-            <div class="slide-indicator">9 / 9</div>
-            <!-- No click instruction on the last slide -->
+             </div>
         </div>
-
+        <div class="slide-indicator">1 / 7</div>
+         <div class="click-hint">点击屏幕或按 → 继续</div>
     </div>
 
-    <script>
-        const slides = document.querySelectorAll('.slide');
-        let currentSlideIndex = 0;
+    <!-- Slide 2: Opening & Agenda -->
+    <div class="slide bg-alt" id="slide-2"> <!-- Added bg-alt -->
+        <div class="slide-content">
+            <h2><i class="fas fa-bullseye icon"></i>总述 & 核心能力</h2>
+            <p>我对利用AI技术解决实际问题充满热情，这份热情源于儿时对QQ机器人的好奇。接下来，我将围绕AI应用开发实习岗位所需的关键能力，分几点汇报我的准备和实践：</p>
+            <ul>
+                <li><i class="fas fa-cogs fa-li"></i>扎实的软件工程功底</li>
+                <li><i class="fas fa-robot fa-li"></i>较强的AI应用开发与整合能力</li>
+                <li><i class="fas fa-rocket fa-li"></i>优秀的快速学习与问题解决能力</li>
+                <li><i class="fas fa-users fa-li"></i>良好的沟通协作与责任担当</li>
+            </ul>
+        </div>
+         <div class="slide-indicator">2 / 7</div>
+         <div class="click-hint">点击屏幕或按 → 继续</div>
+    </div>
 
-        function showSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.classList.remove('active', 'previous');
-                if (i === index) {
-                    slide.classList.add('active');
-                } else if (i < index) {
-                    slide.classList.add('previous');
-                }
-                // Hide click instruction on the last slide or show on others
-                const clickInstruction = slide.querySelector('.click-instruction');
-                 if (clickInstruction) {
-                    clickInstruction.style.display = (i === slides.length - 1) ? 'none' : 'block';
-                }
-            });
+    <!-- Slide 3: Competency 1 -->
+    <div class="slide" id="slide-3">
+         <div class="slide-content">
+            <h2><i class="fas fa-laptop-code icon"></i>软件工程功底</h2>
+            <p>为AI应用的有效落地奠定坚实基础。</p>
+             <div class="highlight-box">
+                <i class="fas fa-building"></i><strong>实习经历 (青岛海研电子):</strong> 深入参与基于<strong class="highlight">Java & Spring Cloud</strong>的微服务后端开发，负责核心业务模块实现与优化，关注构建<strong class="highlight">稳定、高可用</strong>系统。
+            </div>
+            <ul>
+                <li><i class="fas fa-check-circle fa-li" style="color:#10b981;"></i>深刻理解健壮后端对承载AI服务的关键作用。</li>
+                <li><i class="fas fa-check-circle fa-li" style="color:#10b981;"></i>熟练运用AI工具提升学习与开发效率。</li>
+            </ul>
+         </div>
+         <div class="slide-indicator">3 / 7</div>
+         <div class="click-hint">点击屏幕或按 → 继续</div>
+    </div>
+
+    <!-- Slide 4: Competency 2 -->
+    <div class="slide bg-alt" id="slide-4"> <!-- Added bg-alt -->
+         <div class="slide-content">
+             <h2><i class="fas fa-brain icon"></i>AI应用开发与整合能力</h2>
+            <p>具备将想法快速转化为有价值产品的实践经验。</p>
+             <ul>
+                 <li><i class="fas fa-book-open fa-li"></i><strong>技术掌握：</strong> 主动学习并掌握<strong class="highlight">Langchain、RAG</strong>等主流AI应用框架。</li>
+            </ul>
+
+            <div class="project-card">
+                 <h4><i class="fas fa-tasks"></i>项目：AI学长智能体</h4>
+                 <ul>
+                    <li><i class="fas fa-code-branch fa-li" style="color:#3b82f6;"></i>独立完成<strong class="highlight">全流程开发</strong>：从需求分析、技术选型（Prompt, RAG, Function Calling）到部署。</li>
+                    <li><i class="fas fa-chart-line fa-li" style="color:#3b82f6;"></i>成果：高效处理校园服务，关键任务<strong class="highlight">资源消耗降低50%</strong>，注重<strong class="highlight">用户隐私保护</strong>。</li>
+                 </ul>
+            </div>
+
+             <div class="project-card">
+                 <h4><i class="fas fa-bolt"></i>项目：智盾AI安全助手</h4>
+                 <ul>
+                    <li><i class="fas fa-mouse-pointer fa-li" style="color:#3b82f6;"></i>效率：利用<strong class="highlight">Cursor</strong>等AI工具，<strong class="highlight">一周内</strong>完成从原型到产品的快速开发。</li>
+                    <li><i class="fas fa-shipping-fast fa-li" style="color:#3b82f6;"></i>能力：展现<strong class="highlight">快速迭代与落地</strong>能力。</li>
+                 </ul>
+            </div>
+         </div>
+         <div class="slide-indicator">4 / 7</div>
+         <div class="click-hint">点击屏幕或按 → 继续</div>
+    </div>
+
+    <!-- Slide 5: Competency 3 -->
+    <div class="slide" id="slide-5">
+         <div class="slide-content">
+            <h2><i class="fas fa-lightbulb icon"></i>快速学习与问题解决能力</h2>
+            <ul>
+                <li><i class="fas fa-graduation-cap fa-li"></i><strong>学习能力：</strong> 主动攻克<strong class="highlight">新技术框架</strong>，实习中快速上手并承担实际开发任务，展现<strong class="highlight">强适应性</strong>。</li>
+                <li><i class="fas fa-search fa-li"></i><strong>主动性：</strong> 持续关注<strong class="highlight">AI前沿</strong>，活跃于技术社区学习，乐于<strong class="highlight">应用所学解决实际问题</strong>。</li>
+            </ul>
+             <div class="highlight-box">
+                 <i class="fas fa-thumbs-up"></i><strong>外部认可：</strong> 近期在<strong class="highlight">中信科技（北京）的实习生面试</strong>中，技术潜力和综合准备获<strong class="highlight">高度认可</strong>。
+             </div>
+         </div>
+         <div class="slide-indicator">5 / 7</div>
+         <div class="click-hint">点击屏幕或按 → 继续</div>
+    </div>
+
+    <!-- Slide 6: Competency 4 -->
+    <div class="slide bg-alt" id="slide-6"> <!-- Added bg-alt -->
+         <div class="slide-content">
+             <h2><i class="fas fa-users-cog icon"></i>沟通协作与责任担当</h2>
+            <ul>
+                <li><i class="fas fa-sitemap fa-li"></i><strong>领导力与协调：</strong> 担任“58卓越人才班”班长，策划组织活动，有效提升<strong class="highlight">团队凝聚力</strong>与个人组织协调能力。</li>
+                <li><i class="fas fa-comments fa-li"></i><strong>沟通表达：</strong> 负责“云支教”AI课堂，锻炼将<strong class="highlight">复杂技术清晰阐述</strong>的能力。</li>
+                <li><i class="fas fa-handshake fa-li"></i><strong>团队意识：</strong> 坚信良好沟通与团队合作是<strong class="highlight">高效产出</strong>的重要保障。</li>
+            </ul>
+         </div>
+         <div class="slide-indicator">6 / 7</div>
+         <div class="click-hint">点击屏幕或按 → 继续</div>
+    </div>
+
+    <!-- Slide 7: Closing -->
+    <div class="slide" id="slide-7">
+        <div class="slide-content" style="text-align: center;"> <!-- Center align closing text -->
+            <h2><i class="fas fa-flag-checkered icon"></i>总结与期待</h2>
+            <p>基于以上能力与实践，我有信心胜任AI应用开发实习岗位：</p>
+            <div class="summary-points">
+                <span class="summary-point"><i class="fas fa-cogs"></i>扎实工程基础</span>
+                <span class="summary-point"><i class="fas fa-robot"></i>AI应用开发实践</span>
+                <span class="summary-point"><i class="fas fa-rocket"></i>快速学习与解决问题</span>
+                <span class="summary-point"><i class="fas fa-users"></i>沟通协作能力</span>
+            </div>
+            <p style="margin-top: 2.5em;">我渴望能有机会快速融入团队，积极学习、承担任务、做出贡献。</p>
+            <p style="font-weight: 600; color: #1d4ed8; font-size: calc(1.1rem + 0.3vw);">衷心感谢各位评委老师的宝贵时间与指导！</p>
+        </div>
+         <div class="slide-indicator">7 / 7</div>
+         <div class="click-hint" style="display: none;">结束</div>
+    </div>
+
+</div>
+
+<script>
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 0;
+
+    function showSlide(index) {
+        if (index >= totalSlides || index < 0) return;
+
+        if (currentSlide !== index) {
+             const exitingSlide = slides[currentSlide];
+             if (exitingSlide) {
+                exitingSlide.classList.add('exiting');
+                // Use transitionend event for cleaner removal
+                exitingSlide.addEventListener('transitionend', function handler() {
+                    exitingSlide.classList.remove('active');
+                    exitingSlide.classList.remove('exiting');
+                    exitingSlide.removeEventListener('transitionend', handler); // Remove listener
+                }, { once: true }); // Ensure handler runs only once
+             }
+        } else {
+            // If it's the same slide (e.g., on initial load), just ensure it's active
+             if (!slides[index].classList.contains('active')) {
+                 slides[index].classList.add('active');
+             }
         }
 
-        document.getElementById('presentationContainer').addEventListener('click', (event) => {
-            // Prevent advancing if clicking on interactive elements like links in the future
-            if (event.target.tagName === 'A') {
-                return;
-            }
+        // Activate the new slide
+        const newSlide = slides[index];
+        if (newSlide) {
+            newSlide.classList.remove('exiting'); // Prevent conflict if quickly navigating back and forth
+            newSlide.classList.add('active');
+        }
 
-            const previousIndex = currentSlideIndex;
-            currentSlideIndex++;
-            if (currentSlideIndex >= slides.length) {
-                currentSlideIndex = 0; // Loop back
+        currentSlide = index;
+
+        // Update Hints
+        slides.forEach((slide, i) => {
+            const hint = slide.querySelector('.click-hint');
+            if (hint) {
+                hint.style.display = (i === currentSlide && i < totalSlides - 1) ? 'block' : 'none';
             }
-            showSlide(currentSlideIndex);
         });
+    }
 
-        // Initialize first slide
-        showSlide(currentSlideIndex);
-    </script>
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+        showSlide(currentSlide - 1);
+    }
+
+    // Click to advance (on the presentation container might be better than individual slides)
+    const presentation = document.querySelector('.presentation');
+    presentation.addEventListener('click', (e) => {
+        // Basic check to prevent advancing if clicking on interactive elements planned for future
+         if (e.target.closest('a, button, input, select, textarea')) {
+             return;
+         }
+        nextSlide();
+    });
+
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowRight' || event.key === ' ' || event.key === 'ArrowDown') {
+            event.preventDefault(); // Prevent space bar scrolling
+            nextSlide();
+        } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+            event.preventDefault();
+            prevSlide();
+        }
+    });
+
+    // Initialize first slide
+     // Ensure initial slide is correctly set without unwanted transitions
+    if (slides.length > 0) {
+         slides[0].classList.add('active');
+         // Manually trigger the content animation for the first slide
+         const firstSlideContent = slides[0].querySelector('.slide-content');
+         if(firstSlideContent) {
+             setTimeout(() => { // Timeout matches animation-delay
+                 firstSlideContent.style.opacity = '1';
+                 firstSlideContent.style.transform = 'translateY(0)';
+             }, 400); // Match the animation-delay
+         }
+          // Ensure hint is visible on first slide
+         const firstHint = slides[0].querySelector('.click-hint');
+         if(firstHint && totalSlides > 1) firstHint.style.display = 'block';
+    }
+
+
+</script>
+
 </body>
 </html>
