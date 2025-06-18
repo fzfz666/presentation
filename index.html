@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello AI · 五八绿春行实践队 - 立项答辩</title>
+    
+    <!-- Tailwind CSS -->
+    <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts for Chinese -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 核心架构：平滑滚动捕捉 (切换动画速度已调整) --- */
+        html {
+            scroll-behavior: smooth; /* 这是实现平滑切换的关键！ */
+        }
+        body {
+            height: 100vh;
+            overflow: hidden; /* 防止body本身滚动 */
+            font-family: 'Noto Sans SC', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        main {
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory; /* 强制Y轴滚动捕捉 */
+        }
+        .slide {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start; /* 每页顶部对齐视口 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 1.5rem;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden; /* 防止内容溢出影响布局 */
+        }
+
+        /* --- 基础与字体样式 --- */
+        h1, h2, h3, h4, .font-serif { font-family: 'Noto Serif SC', sans-serif; }
+
+        /* --- 深色模式 --- */
+        .dark body { background-color: #0d1117; color: #c9d1d9; }
+        .dark .bg-white { background-color: #161b22; }
+        .dark .bg-gray-50 { background-color: #0d1117; }
+        .dark .text-gray-900 { color: #f0f6fc; }
+        .dark .text-gray-800 { color: #e6edf3; }
+        .dark .text-gray-700 { color: #c9d1d9; }
+        .dark .text-gray-600 { color: #8b949e; }
+        .dark .border-gray-200 { border-color: #30363d; }
+        .dark .brand-blue { color: #58a6ff; }
+        .dark .brand-green { color: #56d364; }
+        .dark .text-brand-blue-dark { color: #79c0ff; }
+        .dark .text-brand-green-dark { color: #7ee787; }
+        .dark .glass-effect { background-color: rgba(22, 27, 34, 0.75); backdrop-filter: blur(12px); }
+        .dark .feature-pill { background-color: #21262d; border-color: #30363d; }
+
+        /* --- 品牌色与特色样式 --- */
+        .brand-blue { color: #2563eb; }
+        .brand-green { color: #16a34a; }
+        .text-brand-blue-dark { color: #1e40af; }
+        .text-brand-green-dark { color: #14532d; }
+        .glass-effect { background-color: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); }
+        .feature-pill {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        .feature-pill:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1);
+        }
+
+        /* --- 动态效果 (切换动画已调慢) --- */
+        @keyframes subtle-gradient {
+            0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+        }
+        .animated-gradient-bg {
+            background: linear-gradient(-45deg, #eff6ff, #f0fdf4, #e0f2fe, #dcfce7);
+            background-size: 400% 400%; animation: subtle-gradient 15s ease infinite;
+        }
+        .dark .animated-gradient-bg {
+            background: linear-gradient(-45deg, #1e3a8a, #064e3b, #0c4a6e, #14532d);
+            background-size: 400% 400%; animation: subtle-gradient 15s ease infinite;
+        }
+        .scroll-reveal { opacity: 0; transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), transform 1.2s cubic-bezier(0.25, 1, 0.5, 1); }
+        .fade-in-up { transform: translateY(50px); }
+        .fade-in-left { transform: translateX(-50px); }
+        .fade-in-right { transform: translateX(50px); }
+        .is-visible { opacity: 1; transform: translate(0, 0); }
+        .parallax-bg {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background-size: cover; background-position: center; z-index: -1;
+            transition: transform 0.2s ease-out;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- 模式切换按钮 -->
+    <button id="theme-toggle" class="fixed top-6 right-6 z-50 p-3 rounded-full bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm shadow-lg transition-all hover:scale-110 hover:shadow-xl focus:outline-none">
+        <i id="theme-toggle-dark-icon" class="fas fa-moon text-xl text-gray-700 dark:text-gray-300 hidden"></i>
+        <i id="theme-toggle-light-icon" class="fas fa-sun text-xl text-gray-700 dark:text-gray-300 hidden"></i>
+    </button>
+    
+    <main id="main-container">
+        <!-- 1. 封面页 -->
+        <section class="slide flex flex-col text-center animated-gradient-bg">
+            <div class="scroll-reveal fade-in-up">
+                <h1 class="text-5xl md:text-7xl font-bold tracking-wider text-gray-900">
+                    Hello <span class="brand-blue">AI</span> · 五八绿春行
+                </h1>
+                <p class="mt-8 text-xl md:text-2xl text-gray-700 font-serif tracking-wide">中国海洋大学信息科学与工程学部实践队</p>
+                <div class="mt-12 text-lg text-gray-600">
+                    <p>暑期社会实践立项答辩</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 背景深掘 -->
+        <section class="slide">
+            <div class="parallax-bg" style="background-image: url('https://images.unsplash.com/photo-1542880942-532999587441?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80'); opacity: 0.15;"></div>
+            <div class="container mx-auto max-w-6xl">
+                <div class="text-center mb-12 scroll-reveal fade-in-up">
+                    <h2 class="text-4xl md:text-5xl font-bold">时代之问：我们为何出发？</h2>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-start">
+                    <div class="glass-effect p-8 rounded-2xl shadow-lg scroll-reveal fade-in-left border border-gray-200">
+                        <i class="fas fa-feather-pointed text-5xl brand-green mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-3">文化的困境：非遗传承的“数字断层”</h3>
+                        <ul class="space-y-3 mt-4 text-gray-700">
+                            <li><i class="fas fa-user-clock fa-fw mr-2 text-red-500"></i><span class="font-semibold">传承人老龄化</span></li>
+                            <li><i class="fas fa-folder-open fa-fw mr-2 text-red-500"></i><span class="font-semibold">数字化档案缺失</span></li>
+                            <li><i class="fas fa-arrow-trend-down fa-fw mr-2 text-red-500"></i><span class="font-semibold">市场萎缩</span></li>
+                        </ul>
+                    </div>
+                    <div class="glass-effect p-8 rounded-2xl shadow-lg scroll-reveal fade-in-right" style="transition-delay: 200ms;">
+                        <i class="fas fa-satellite-dish text-5xl brand-blue mb-4"></i>
+                        <h3 class="text-2xl font-bold mb-3">教育的鸿沟：乡村儿童的“AI缺席”</h3>
+                        <ul class="space-y-3 mt-4 text-gray-700">
+                            <li><i class="fas fa-chalkboard-user fa-fw mr-2 text-blue-500"></i><span class="font-semibold">专业师资匮乏</span></li>
+                            <li><i class="fas fa-lightbulb fa-fw mr-2 text-blue-500"></i><span class="font-semibold">创新视野局限</span></li>
+                            <li><i class="fas fa-link-slash fa-fw mr-2 text-blue-500"></i><span class="font-semibold">数字机会不均</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 3. 项目总览 (可视化已修改) -->
+        <section class="slide bg-white">
+            <div class="container mx-auto max-w-6xl text-center">
+                 <div class="scroll-reveal fade-in-up">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4">海大之解：一体两翼，双向赋能</h2>
+                    <p class="max-w-4xl mx-auto text-lg text-gray-600 mb-16">延续线上支教基础，我们以<span class="font-semibold brand-blue">信息技术</span>为核心驱动，同时赋能<span class="font-semibold brand-green">文化传承</span>与<span class="font-semibold brand-blue">教育启蒙</span>。</p>
+                </div>
+                <div class="w-full flex flex-col md:flex-row items-center justify-center gap-8 md:gap-0">
+                    <div class="scroll-reveal fade-in-left w-64">
+                        <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg text-center border-t-4 border-brand-green transition-all hover:shadow-2xl hover:-translate-y-2">
+                            <i class="fas fa-palette text-4xl brand-green mb-3"></i>
+                            <h4 class="font-bold text-xl">文化调研</h4>
+                            <p class="text-sm text-gray-500">活化文化遗产</p>
+                        </div>
+                    </div>
+                    <div class="scroll-reveal fade-in-up text-gray-300 dark:text-gray-600 px-4 text-4xl font-thin transform md:-translate-y-4">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="scroll-reveal fade-in-right w-64">
+                        <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg text-center border-t-4 border-brand-blue transition-all hover:shadow-2xl hover:-translate-y-2">
+                            <i class="fas fa-child-reaching text-4xl brand-blue mb-3"></i>
+                            <h4 class="font-bold text-xl">计算机支教</h4>
+                            <p class="text-sm text-gray-500">启迪未来人才</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 模块一详解：文化调研 -->
+        <section class="slide">
+             <div class="parallax-bg" style="background-image: url('https://img.nickyam.com/file/AgACAgUAAyEGAASS2zT1AAIUm2hSeX4OaLYDByCXLCVBcgPxs91gAAIfyjEbGnmQVnPI7S2GnpuXAQADAgADeQADNgQ.png'); opacity: 0.1;"></div>
+            <div class="container mx-auto max-w-6xl grid md:grid-cols-2 gap-16 items-center">
+                <div class="scroll-reveal fade-in-left">
+                    <img src="https://img.nickyam.com/file/AgACAgUAAyEGAASS2zT1AAIUm2hSeX4OaLYDByCXLCVBcgPxs91gAAIfyjEbGnmQVnPI7S2GnpuXAQADAgADeQADNgQ.png" alt="云南绿春美景" class="rounded-2xl shadow-2xl">
+                </div>
+                <div class="scroll-reveal fade-in-right">
+                    <h3 class="text-lg font-semibold brand-green tracking-widest">模块一：文化调研</h3>
+                    <h2 class="text-4xl font-bold mt-2 mb-6 text-brand-green-dark">智绘绿春 · 数字生花</h2>
+                    <div class="space-y-4">
+                        <div class="feature-pill p-4 rounded-lg flex items-center"><i class="fas fa-camera-retro fa-fw mr-4 text-2xl brand-green"></i><div><h4 class="font-semibold text-lg">系统化<span class="font-bold brand-green">采集</span></h4><p class="text-sm text-gray-600">全面记录纹样、工艺及口述史</p></div></div>
+                        <div class="feature-pill p-4 rounded-lg flex items-center"><i class="fas fa-database fa-fw mr-4 text-2xl brand-green"></i><div><h4 class="font-semibold text-lg">结构化<span class="font-bold brand-green">建档</span></h4><p class="text-sm text-gray-600">建立可检索、可分析的数字素材库</p></div></div>
+                        <div class="feature-pill p-4 rounded-lg flex items-center"><i class="fas fa-vector-square fa-fw mr-4 text-2xl brand-green"></i><div><h4 class="font-semibold text-lg">数字化<span class="font-bold brand-green">转译</span></h4><p class="text-sm text-gray-600">为文创设计、线上展览提供基础</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 模块二详解：计算机支教 -->
+        <section class="slide bg-white">
+             <div class="container mx-auto max-w-6xl grid md:grid-cols-2 gap-16 items-center">
+                <div class="scroll-reveal fade-in-right md:order-2">
+                     <img src="https://img.nickyam.com/file/AgACAgUAAyEGAASS2zT1AAIUmGhScjU301zrdWNxpWP12VKyUUjdAAIPyjEbGnmQVqriRB52ZjNoAQADAgADeQADNgQ.jpg" alt="往期老师授课照片" class="rounded-2xl shadow-2xl">
+                </div>
+                <div class="scroll-reveal fade-in-left md:order-1">
+                    <h3 class="text-lg font-semibold brand-blue tracking-widest">模块二：计算机支教</h3>
+                    <h2 class="text-4xl font-bold mt-2 mb-6 text-brand-blue-dark">E启未来 · 数字星光</h2>
+                    <div class="space-y-4">
+                        <div class="feature-pill p-4 rounded-lg flex items-center"><i class="fas fa-puzzle-piece fa-fw mr-4 text-2xl brand-blue"></i><div><h4 class="font-semibold text-lg">核心课程：<span class="font-bold brand-blue">AI创想课</span></h4><p class="text-sm text-gray-600">通过PBL项目式学习，感受创造乐趣</p></div></div>
+                        <div class="feature-pill p-4 rounded-lg flex items-center"><i class="fas fa-compass fa-fw mr-4 text-2xl brand-blue"></i><div><h4 class="font-semibold text-lg">基础素养：<span class="font-bold brand-blue">网络起步 & 智慧守护</span></h4><p class="text-sm text-gray-600">做负责任的数字小公民</p></div></div>
+                        <div class="feature-pill p-4 rounded-lg flex items-center"><i class="fas fa-heart-pulse fa-fw mr-4 text-2xl brand-blue"></i><div><h4 class="font-semibold text-lg">人文关怀：<span class="font-bold brand-blue">心理护航</span></h4><p class="text-sm text-gray-600">关注内心世界，引导思考未来</p></div></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. 核心产出亮点 -->
+        <section class="slide">
+            <div class="parallax-bg" style="background-image: url('https://images.unsplash.com/photo-1620712943543-2858200f7426?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80'); opacity: 0.1;"></div>
+            <div class="container mx-auto max-w-6xl grid md:grid-cols-2 gap-16 items-center">
+                 <div class="scroll-reveal fade-in-left">
+                    <h3 class="text-lg font-semibold brand-blue tracking-widest">核心产出亮点</h3>
+                    <h2 class="text-4xl font-bold mt-2 mb-6 text-brand-blue-dark"><i class="fas fa-robot mr-4"></i>一个可带走的“AI伙伴”</h2>
+                    <p class="text-gray-600 leading-relaxed mb-6">夏令营的终极目标，是让每个孩子都能带走一件自己亲手创造的作品。这不仅是成果，更是一个能陪伴他们成长的智能伙伴。</p>
+                    <ul class="space-y-4 text-gray-700">
+                        <li class="flex items-start"><i class="fas fa-tools fa-fw mr-3 mt-1 text-blue-500"></i><p><strong class="font-semibold">从零到一的搭建</strong></p></li>
+                        <li class="flex items-start"><i class="fas fa-microphone-lines fa-fw mr-3 mt-1 text-blue-500"></i><p><strong class="font-semibold">可交互的语音对话</strong></p></li>
+                        <li class="flex items-start"><i class="fas fa-seedling fa-fw mr-3 mt-1 text-blue-500"></i><p><strong class="font-semibold">一颗创新的种子</strong></p></li>
+                    </ul>
+                </div>
+                <div class="scroll-reveal fade-in-right flex items-center justify-center">
+                    <div class="relative w-80 h-80 md:w-96 md:h-96">
+                        <div class="absolute inset-0 bg-blue-200 dark:bg-blue-800/50 rounded-full animate-ping opacity-50"></div>
+                        <div class="absolute inset-4 bg-blue-200 dark:bg-blue-800/50 rounded-full animate-ping opacity-75 delay-1000"></div>
+                        <img src="https://img.nickyam.com/file/AgACAgUAAyEGAASS2zT1AAIUmmhSczqm1oseum6N7XNm6eqO8uLqAAISyjEbGnmQVq5VgEJWe0THAQADAgADeQADNgQ.png" alt="AI对话套件" class="relative z-10 w-full h-full object-contain transition-transform hover:scale-105">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. 详细课程表 (样式已修改) -->
+        <section class="slide bg-white">
+            <div class="container mx-auto max-w-7xl">
+                <div class="text-center mb-12 scroll-reveal fade-in-up">
+                    <h2 class="text-4xl md:text-5xl font-bold">精耕细作：我们的“AI创想营”课表</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                    <div class="scroll-reveal fade-in-up bg-gray-50 dark:bg-gray-800 p-8 rounded-2xl shadow-lg transition-all hover:shadow-2xl hover:-translate-y-2">
+                        <h4 class="font-bold text-xl mb-4 flex items-center"><i class="fas fa-sun mr-3 text-yellow-500"></i>7月6日 · 破冰启航</h4>
+                        <ul class="space-y-4 text-sm"><li class="flex items-start"><strong class="w-16">08:30</strong><div><strong>开营仪式：</strong>引入兴趣以趣味问答形式发放小礼品,激发学生对数字世界的好奇心。</div></li><li class="flex items-start"><strong class="w-16">10:35</strong><div><strong>网络起步课：</strong>介绍基础计算机知识包括如何使用浏览器、搜索引擎与常用网站,为后续课程打好基础。</div></li><li class="flex items-start"><strong class="w-16">14:00</strong><div><strong>心影初见：</strong>观看一部心理主题电影,引发情感共鸣,为心理课程建立情感基础。</div></li></ul>
+                    </div>
+                    <div class="scroll-reveal fade-in-up bg-gray-50 dark:bg-gray-800 p-8 rounded-2xl shadow-lg transition-all hover:shadow-2xl hover:-translate-y-2" style="transition-delay: 200ms;">
+                        <h4 class="font-bold text-xl mb-4 flex items-center"><i class="fas fa-star mr-3 text-red-500"></i>7月7日 · 核心创造</h4>
+                        <ul class="space-y-4 text-sm"><li class="flex items-start"><strong class="w-16">08:30</strong><div><strong>AI创想课(理论)：</strong>讲解AI概念与应用,让学生形成初步认知。</div></li><li class="flex items-start"><strong class="w-16 text-red-500 font-bold">14:30</strong><div><strong>AI创想课(实践)：</strong>指导学生组装AI玩具,亲身体验AI技术,感受魅力。</div></li><li class="flex items-start"><strong class="w-16">作业</strong><div><strong>未来星图(写信)：</strong>引导学生思考未来,给自己写一封信。</div></li></ul>
+                    </div>
+                    <div class="scroll-reveal fade-in-up bg-gray-50 dark:bg-gray-800 p-8 rounded-2xl shadow-lg transition-all hover:shadow-2xl hover:-translate-y-2" style="transition-delay: 400ms;">
+                        <h4 class="font-bold text-xl mb-4 flex items-center"><i class="fas fa-rocket mr-3 text-purple-500"></i>7月8日 · 应用展望</h4>
+                        <ul class="space-y-4 text-sm"><li class="flex items-start"><strong class="w-16">08:30</strong><div><strong>智慧守护课：</strong>科普保护个人信息、防止网络沉迷的方法。</div></li><li class="flex items-start"><strong class="w-16">14:00</strong><div><strong>趣味游园会：</strong>将教学知识融入趣味活动中,让学生在玩中学。</div></li><li class="flex items-start"><strong class="w-16 text-red-500 font-bold">16:00</strong><div><strong>闭营仪式：</strong>展示学习成果,回顾美好时光,庆祝彼此收获。</div></li></ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. 保障：一年之约 (蒙版文字已修改) -->
+        <section class="slide">
+             <div class="parallax-bg" style="background-image: url('https://img.nickyam.com/file/AgACAgUAAyEGAASS2zT1AAIUl2hScgrgPB0w2zty9XoBv-w5ZSj_AAINyjEbGnmQVg9STDe42cRgAQADAgADdwADNgQ.jpg');"></div>
+             <div class="absolute inset-0 bg-black/40"></div>
+             <div class="relative z-10 text-center p-8 scroll-reveal fade-in-up">
+                <div class="glass-effect p-8 md:p-12 rounded-2xl shadow-xl border border-white/20">
+                    <i class="fas fa-handshake-angle text-6xl text-green-300 mb-8"></i>
+                    <h2 class="text-4xl md:text-5xl font-bold text-gray-900">一年之约，情谊深厚</h2>
+                    <p class="mt-6 max-w-2xl mx-auto text-xl leading-relaxed text-gray-800">这不是一次冲动，而是一场延续了一年的约定。我们与绿春的孩子们早已通过线上支教建立了深厚的信任与情感联结，为我们线下实践的深度与温度提供了最坚实的保障。</p>
+                </div>
+             </div>
+        </section>
+
+        <!-- 9. 保障：精英团队 (样式已修改) -->
+        <section class="slide bg-white">
+            <div class="container mx-auto max-w-6xl">
+                <div class="text-center mb-12 scroll-reveal fade-in-up">
+                    <h2 class="text-4xl md:text-5xl font-bold">信心之源：我们的精英团队</h2>
+                </div>
+                <div class="space-y-8">
+                    <div class="scroll-reveal fade-in-up p-6 rounded-2xl shadow-lg bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/30 dark:to-green-900/30">
+                        <div class="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                            <i class="fas fa-user-shield text-5xl text-brand-blue"></i>
+                            <div>
+                                <h3 class="text-2xl font-bold">官方指导 · 学部支持</h3>
+                                <p class="text-lg text-gray-600">本项目由 <strong class="text-brand-blue-dark font-semibold">信息学部团委老师 乔文瑛老师</strong> 亲自带队指导，确保项目的规范性、安全性与专业高度。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <!-- Team Member Cards (样式已修改) -->
+                        <div class="scroll-reveal fade-in-up text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md transition-all hover:shadow-xl hover:-translate-y-1 border-t-4 border-brand-blue"><p class="font-bold text-lg">方智 (组长)</p><p class="text-xs text-gray-500">协调策划、AI实践指导</p></div>
+                        <div class="scroll-reveal fade-in-up text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md transition-all hover:shadow-xl hover:-translate-y-1 border-t-4 border-brand-green" style="transition-delay: 50ms;"><p class="font-bold text-lg">邓林</p><p class="text-xs text-gray-500">文体活动组织</p></div>
+                        <div class="scroll-reveal fade-in-up text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md transition-all hover:shadow-xl hover:-translate-y-1 border-t-4 border-brand-blue" style="transition-delay: 100ms;"><p class="font-bold text-lg">刘芳宇</p><p class="text-xs text-gray-500">网络安全教学</p></div>
+                        <div class="scroll-reveal fade-in-up text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md transition-all hover:shadow-xl hover:-translate-y-1 border-t-4 border-brand-green" style="transition-delay: 150ms;"><p class="font-bold text-lg">赵宇浩</p><p class="text-xs text-gray-500">AI课程主讲</p></div>
+                        <div class="scroll-reveal fade-in-up text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md transition-all hover:shadow-xl hover:-translate-y-1 border-t-4 border-brand-blue" style="transition-delay: 200ms;"><p class="font-bold text-lg">操淳</p><p class="text-xs text-gray-500">计算机基础主讲</p></div>
+                        <div class="scroll-reveal fade-in-up text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md transition-all hover:shadow-xl hover:-translate-y-1 border-t-4 border-brand-green" style="transition-delay: 250ms;"><p class="font-bold text-lg">曲泓勃</p><p class="text-xs text-gray-500">晚会与游园会策划</p></div>
+                        <div class="scroll-reveal fade-in-up text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md transition-all hover:shadow-xl hover:-translate-y-1 border-t-4 border-brand-blue" style="transition-delay: 300ms;"><p class="font-bold text-lg">郑鑫</p><p class="text-xs text-gray-500">后勤总协调</p></div>
+                        <div class="scroll-reveal fade-in-up text-center p-4 bg-white dark:bg-gray-800 rounded-xl shadow-md transition-all hover:shadow-xl hover:-translate-y-1 border-t-4 border-brand-green" style="transition-delay: 350ms;"><p class="font-bold text-lg">陈怡冰</p><p class="text-sm text-gray-500">心理课程设计</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. 愿景与致谢 (已修改) -->
+        <section class="slide">
+            <div class="container mx-auto max-w-4xl text-center">
+                <div class="scroll-reveal fade-in-up">
+                     <svg class="mx-auto mb-8 h-24 w-24" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path class="fill-brand-blue" d="M50,5 A45,45 0 0 1 95,50 L95,80 A45,45 0 0 1 5,80 L5,50 A45,45 0 0 1 50,5 Z" opacity="0.2"/>
+                        <path class="fill-brand-green" d="M50,95 A45,45 0 0 1 5,50 L5,20 A45,45 0 0 1 95,20 L95,50 A45,45 0 0 1 50,95 Z" opacity="0.2"/>
+                        <path class="fill-brand-blue" d="M50 20 A30 30 0 0 1 80 50 A30 30 0 0 1 50 80" />
+                        <path class="fill-brand-green" d="M50 20 A30 30 0 0 0 20 50 A30 30 0 0 0 50 80" />
+                    </svg>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-8">我们的愿景</h2>
+                    <div class="text-2xl md:text-3xl text-gray-700 font-serif leading-relaxed space-y-4">
+                        <p>教会孩子们正确使用计算机，</p>
+                        <p>更重要的是，<span class="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-green-500">点亮一群眼里有光的少年！</span></p>
+                    </div>
+                    <blockquote class="mt-12 p-6 glass-effect rounded-2xl shadow-lg border border-gray-200">
+                        <p class="text-lg text-gray-600">“一年以前，他们说：老师，下次我还想再见到你们。”</p>
+                        <p class="text-4xl md:text-5xl text-gray-800 font-bold mt-4 tracking-wider">这一次，我们真的来了。</p>
+                    </blockquote>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // --- 主题切换逻辑 ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        const htmlEl = document.documentElement;
+
+        function showCorrectIcon() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                lightIcon.classList.remove('hidden'); darkIcon.classList.add('hidden');
+            } else {
+                darkIcon.classList.remove('hidden'); lightIcon.classList.add('hidden');
+            }
+        }
+
+        function applyTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                htmlEl.classList.add('dark');
+            } else {
+                htmlEl.classList.remove('dark');
+            }
+            showCorrectIcon();
+        }
+
+        themeToggle.addEventListener('click', () => {
+            localStorage.theme = htmlEl.classList.contains('dark') ? 'light' : 'dark';
+            applyTheme();
+        });
+        
+        document.addEventListener('DOMContentLoaded', applyTheme);
+
+        // --- 视差滚动效果 ---
+        const mainContainer = document.getElementById('main-container');
+        mainContainer.addEventListener('scroll', () => {
+            const scrollTop = mainContainer.scrollTop;
+            document.querySelectorAll('.parallax-bg').forEach(el => {
+                const rect = el.parentElement.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    const speed = 0.3;
+                    const yPos = -(rect.top * speed);
+                    el.style.transform = `translateY(${yPos}px)`;
+                }
+            });
+        });
+
+        // --- 滚动显示动画 ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
